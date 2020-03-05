@@ -1,7 +1,7 @@
 
   // Your web app's Firebase configuration
   var firebaseConfig = {
-    apiKey: "AIzaSyBH205AnxkHbSPXgsZ6jXo-R1yp_7G9910",
+    apiKey: "YOUR API KEY",
     authDomain: "stock-trading-trainer.firebaseapp.com",
     databaseURL: "https://stock-trading-trainer.firebaseio.com",
     projectId: "stock-trading-trainer",
