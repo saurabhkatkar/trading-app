@@ -1,0 +1,14 @@
+.table-card{
+    margin: 0;
+    padding: 0;
+}
+.table-column{
+    padding-bottom: 5%;
+}
+.btn-tabs{
+    background-color: transparent;
+}
+.btn-tabs:focus {
+    outline: 0;
+    box-shadow:none ;
+}
