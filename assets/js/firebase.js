@@ -2,6 +2,7 @@ var db = firebase.firestore();
 console.log("Database connection successful",db);
 getStockPrices();
 getUserDetails();
+var key ;
 
 
 function submitForm(){
@@ -10,18 +11,21 @@ function submitForm(){
         stockChange =  $('#stockChange').val(),
         stockVolume =  $('#stockVolume').val();
     
-    var sfDocRef = db.collection("stocks").doc(stockName);
+    var sfDocRef = db.collection("stocks").doc(key);
     db.runTransaction(function(transaction) {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(sfDocRef).then(function(sfDoc) {
         if (!sfDoc.exists) {
             throw "Document does not exist!";
         }
-        transaction.update(sfDocRef, { price: stockPrice, change: stockChange, volume: stockVolume });
+        transaction.update(sfDocRef, { price: parseFloat(stockPrice), change: parseFloat(stockChange), volume: parseInt(stockVolume) });
     });
     }).then(function() {
+        key = '';
+
         console.log("Transaction successfully committed!");
         $('#stocksModal').modal('hide');
+        
     }).catch(function(error) {
         console.log("Transaction failed: ", error);
     });
@@ -31,13 +35,17 @@ function submitForm(){
 }
 
 function editButtonClicked(e){
+    $('#stockName').attr("disabled",true);
+    $('#submit-model').removeClass("d-none");
+    $('#save-model').addClass("d-none");
+
      var modal = document.getElementById('model-form');
-    var key = e.target.getAttribute('stockid');
+    key = e.target.getAttribute('stockid');
     var docRef = db.collection("stocks").doc(key);
     docRef.get().then(function(doc){
          if (doc.exists) {
              data = doc.data();
-             $('#stockName').val(data['Name']);
+             $('#stockName').val(data['name']);
              $('#stockPrice').val(data['price']);
              $('#stockChange').val(data['change']);
              $('#stockVolume').val(data['volume']);
@@ -77,14 +85,16 @@ function getStockPrices(){
             var cell2 = row.insertCell(2);
             var cell3 = row.insertCell(3);
             var cell4 = row.insertCell(4);
+            var cell5 = row.insertCell(5);
             if(firebaseData){
                 cell0.outerHTML= `<th scope="row"> ${i} </th>`;
-                cell1.innerHTML= firebaseData['Name'].toUpperCase();
+                cell1.innerHTML= firebaseData['name'].toUpperCase();
                 cell2.innerHTML= firebaseData['price'];
                 cell3.innerHTML= firebaseData['change'];
-                cell4.innerHTML = `<i class="ti-pencil-alt" id="edit-stock${i}" data-toggle="modal" data-target="#stocksModal" type="button"></i>`;
+                cell4.innerHTML= firebaseData['volume'];
+                cell5.innerHTML = `<i class="ti-pencil-alt" id="edit-stock${i}" data-toggle="modal" data-target="#stocksModal" type="button"></i>`;
                 let editIcon = document.getElementById(`edit-stock${i}`),
-                    key = firebaseData['Name'];
+                    key = doc.id;
                 editIcon.addEventListener("click", editButtonClicked);
                 editIcon.setAttribute("stockid",key);
                 
@@ -133,3 +143,40 @@ function getUserDetails(){
     });
 }
 
+function createStocks(){
+    console.log("Creating new Stocks");
+    $('#stockName').removeAttr("disabled");
+    $('#submit-model').addClass("d-none");
+    $('#save-model').removeClass("d-none");
+    $('#stockName').val('');
+    $('#stockPrice').val('');
+    $('#stockChange').val('');
+    $('#stockVolume').val('');
+
+}
+
+function saveForm(){
+    var sName = $('#stockName').val(),
+        sPrice = parseFloat($('#stockPrice').val()),
+        sChange = parseFloat($('#stockChange').val()),
+        sVolume = parseInt($('#stockVolume').val());
+    console.log("create Form");
+    db.collection("stocks").add({
+    name: sName,
+    change:sChange,
+    price:sPrice,
+    volume:sVolume,
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+        $('#stocksModal').modal('hide');
+
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+}
+
+function fetchStocks(){
+    console.log("Fetching new Stocks");
+}

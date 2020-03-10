@@ -1,13 +1,13 @@
 
   // Your web app's Firebase configuration
   var firebaseConfig = {
-    apiKey: "AIzaSyBH205AnxkHbSPXgsZ6jXo-R1yp_7G9910",
-    authDomain: "stock-trading-trainer.firebaseapp.com",
-    databaseURL: "https://stock-trading-trainer.firebaseio.com",
-    projectId: "stock-trading-trainer",
-    storageBucket: "stock-trading-trainer.appspot.com",
-    messagingSenderId: "76533038893",
-    appId: "1:76533038893:web:85d92da7e68443d8d61da4"
+    apiKey: "AIzaSyBK6IdfZSAerosbTIO8cVJYbjqFgoHAmsc",
+    authDomain: "virtual-trader-d8643.firebaseapp.com",
+    databaseURL: "https://virtual-trader-d8643.firebaseio.com",
+    projectId: "virtual-trader-d8643",
+    storageBucket: "virtual-trader-d8643.appspot.com",
+    messagingSenderId: "583514046224",
+    appId: "1:583514046224:web:77afadbdc8fcc37901ef95"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);

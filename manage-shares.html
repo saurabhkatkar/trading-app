@@ -280,6 +280,15 @@
               
                   <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion" >
                     <div class="card-body table-card">
+                        
+                        <div class="row mt-2 ml-3">
+                            <button class="btn" data-toggle="modal" data-target="#stocksModal" onclick="createStocks()" >
+                                Create Stock
+                              </button>
+                              <button class="btn ml-3" onclick="fetchStocks()">
+                                Fetch Stocks
+                              </button>
+                        </div>
                      
                         <!-- admin table start -->
                             <div class="row">
@@ -296,7 +305,9 @@
                                                                 <th scope="col">ID</th>
                                                                 <th scope="col">Share Name</th>
                                                                 <th scope="col">price</th>
+                                                               
                                                                 <th scope="col">change</th>
+                                                                <th scope="col">volume</th>
                                                                 <!-- <th scope="col">volume</th> -->
                                                                 <th scope="col">Action</th>
                                                             </tr>
@@ -460,7 +471,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Modify Stocks</h5>
+              <h5 class="modal-title">Stocks Info</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -471,7 +482,7 @@
                         <form class='model-form'>
                             <div class="form-group">
                                 <label for="stockName">Stock Name</label>
-                                <input type="text" class="form-control" id="stockName" placeholder="Stock" disabled>
+                                <input type="text" class="form-control" id="stockName" placeholder="Stock">
                                 
                             </div>
                             <div class="form-group">
@@ -487,7 +498,8 @@
                                 <input type="number" class="form-control" id="stockVolume" placeholder="Volume">
                             </div>
                            
-                            <button type="button" class="btn btn-primary mt-4 pr-4 pl-4" onclick="submitForm()">Submit</button>
+                            <button type="button"id="submit-model" class="btn btn-primary mt-4 pr-4 pl-4" onclick="submitForm()">Submit</button>
+                            <button type="button" id="save-model" class="btn btn-primary mt-4 pr-4 pl-4 d-none" onclick="saveForm()">Save</button>
                         </form>
                     </div>
                 </div>
