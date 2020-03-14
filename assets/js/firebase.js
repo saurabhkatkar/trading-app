@@ -2,7 +2,7 @@ var db = firebase.firestore();
 console.log("Database connection successful",db);
 getStockPrices();
 getUserDetails();
-var key ;
+var key,userKey,userStockKey ;
 
 
 function submitForm(){
@@ -58,11 +58,11 @@ function editButtonClicked(e){
     })
 }
 
-function removeTableItems(){
-     var tableLength = document.getElementById('admin-table').rows.length;    
+function removeTableItems(elementId){
+     var tableLength = document.getElementById(elementId).rows.length;    
     if (tableLength > 1 ){
         for(var i = tableLength; i > 1;i--){
-         document.getElementById("admin-table").deleteRow(i-1);
+         document.getElementById(elementId).deleteRow(i-1);
         }
     }
     else{
@@ -73,7 +73,7 @@ function getStockPrices(){
     var docRef = db.collection("stocks");
 
     docRef.onSnapshot(function(querySnapshot) {
-        removeTableItems();
+        removeTableItems('admin-table');
         i = 1
         querySnapshot.forEach(function(doc){
             if (doc.exists) {
@@ -124,10 +124,16 @@ function getUserDetails(){
         var cell0 = row.insertCell(0);
         var cell1 = row.insertCell(1);
         var cell2 = row.insertCell(2);
+        var cell3 = row.insertCell(3);
         if(firebaseData){
             cell0.outerHTML= `<th scope="row"> ${i} </th>`;
             cell1.innerHTML= firebaseData['username'].toUpperCase();
             cell2.innerHTML= firebaseData['email'];
+             cell3.innerHTML = `<i class="ti-pencil-alt" id="detail-user${i}" data-toggle="modal" data-target="#userStockModal" type="button"></i>`;
+                let editIcon = document.getElementById(`detail-user${i}`),
+                    userKey = doc.id;
+                editIcon.addEventListener("click", getUserStock);
+                editIcon.setAttribute("userid",userKey);
         }
         i++;
         console.log("Document data:", firebaseData);
@@ -143,6 +149,60 @@ function getUserDetails(){
     });
 }
 
+function getUserStock(e){
+    userKey = e.target.getAttribute('userid');
+    var docRef = db.collection("users").doc(userKey).collection("mystocks");
+    docRef.get().then(
+        function(querySnapshot){
+            removeTableItems('userStockTable');
+            i=1;
+            querySnapshot.forEach(function(doc){
+                  if (doc.exists) {
+                    var table = document.getElementById('userStockTable').getElementsByTagName('tbody')[0];
+                    var row = table.insertRow();
+                    var firebaseData = doc.data();
+                    var cell0 = row.insertCell(0);
+                    var cell1 = row.insertCell(1);
+                    var cell2 = row.insertCell(2);
+                    var cell3 = row.insertCell(3);
+                    var cell4 = row.insertCell(4);
+                    if(firebaseData){
+                        cell0.outerHTML= `<th scope="row"> ${i} </th>`;
+                        cell1.innerHTML= firebaseData['stockName'].toUpperCase();
+                        cell2.innerHTML= firebaseData['quantity'];
+                        cell3.innerHTML= firebaseData['price'];
+                        cell4.innerHTML = `<i class="ti-trash" id="detailUserStock${i}" type="button"></i>`;
+                            let editIcon = document.getElementById(`detailUserStock${i}`),
+                                userStockKey = doc.id;
+                            editIcon.addEventListener("click", deleteUserStock);
+                            editIcon.setAttribute("userId",userKey);
+                            editIcon.setAttribute("userStockId",userStockKey);
+                    }
+                    i++;
+                    console.log("Document data:", firebaseData);
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            })
+    })
+
+}
+
+function deleteUserStock(e){
+    
+    userKey = e.target.getAttribute('userId');
+    userStockKey = e.target.getAttribute('userStockId');
+    var docRef = db.collection("users").doc(userKey).collection("mystocks");
+    if(userStockKey){
+        docRef.doc(userStockKey).delete().then(function(){
+            getUserStock(e);
+            console.log(`User ${userKey} Stock ${userStockKey} Deleted successfully`);
+        })
+    }
+
+}
+
 function createStocks(){
     console.log("Creating new Stocks");
     $('#stockName').removeAttr("disabled");
@@ -152,7 +212,6 @@ function createStocks(){
     $('#stockPrice').val('');
     $('#stockChange').val('');
     $('#stockVolume').val('');
-
 }
 
 function saveForm(){
@@ -179,4 +238,5 @@ function saveForm(){
 
 function fetchStocks(){
     console.log("Fetching new Stocks");
+    getStockPrices();
 }
