@@ -4,6 +4,20 @@ getStockPrices();
 getUserDetails();
 var key,userKey,userStockKey ;
 
+async function checkProfitOrLoss(sname,sprice,n){
+    var rsPrice,chng;
+    var docRef = db.collection("stocks");
+    await docRef.where("name","==",sname).get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+            var data=  doc.data();
+            rsPrice = data["price"];
+        });
+    });
+    chng = rsPrice - sprice;
+    return chng;
+
+}
+
 
 function submitForm(){
     var stockName =  $('#stockName').val(),
@@ -100,7 +114,7 @@ function getStockPrices(){
                 
             }
             i++;
-            console.log("Document data:", firebaseData);
+            // console.log("Document data:", firebaseData);
         } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
@@ -129,14 +143,14 @@ function getUserDetails(){
             cell0.outerHTML= `<th scope="row"> ${i} </th>`;
             cell1.innerHTML= firebaseData['username'].toUpperCase();
             cell2.innerHTML= firebaseData['email'];
-             cell3.innerHTML = `<i class="ti-pencil-alt" id="detail-user${i}" data-toggle="modal" data-target="#userStockModal" type="button"></i>`;
+            cell3.innerHTML = `<i class="ti-pencil-alt" id="detail-user${i}" data-toggle="modal" data-target="#userStockModal" type="button"></i>`;
                 let editIcon = document.getElementById(`detail-user${i}`),
                     userKey = doc.id;
                 editIcon.addEventListener("click", getUserStock);
                 editIcon.setAttribute("userid",userKey);
         }
         i++;
-        console.log("Document data:", firebaseData);
+        // console.log("Document data:", firebaseData);
     } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
@@ -156,7 +170,7 @@ function getUserStock(e){
         function(querySnapshot){
             removeTableItems('userStockTable');
             i=1;
-            querySnapshot.forEach(function(doc){
+            querySnapshot.forEach(async function(doc){
                   if (doc.exists) {
                     var table = document.getElementById('userStockTable').getElementsByTagName('tbody')[0];
                     var row = table.insertRow();
@@ -166,17 +180,32 @@ function getUserStock(e){
                     var cell2 = row.insertCell(2);
                     var cell3 = row.insertCell(3);
                     var cell4 = row.insertCell(4);
+                    // var cell5 = row.insertCell(5);
                     if(firebaseData){
+                        var stockName = firebaseData['stockName'];
+                        var stockPrice = firebaseData['price'];
+                        var quantity = firebaseData['quantity'];
+                        var chng = await checkProfitOrLoss(stockName,stockPrice,quantity);
+                        var arrow,color;
+                        if (chng>0){
+                            arrow = "up";
+                            color = "green";
+                        }else{
+                            arrow = "down";
+                            color = "red";
+                        }
                         cell0.outerHTML= `<th scope="row"> ${i} </th>`;
-                        cell1.innerHTML= firebaseData['stockName'].toUpperCase();
+                        cell1.innerHTML= stockName.toUpperCase();
                         cell2.innerHTML= firebaseData['quantity'];
-                        cell3.innerHTML= firebaseData['price'];
-                        cell4.innerHTML = `<i class="ti-trash" id="detailUserStock${i}" type="button"></i>`;
-                            let editIcon = document.getElementById(`detailUserStock${i}`),
-                                userStockKey = doc.id;
-                            editIcon.addEventListener("click", deleteUserStock);
-                            editIcon.setAttribute("userId",userKey);
-                            editIcon.setAttribute("userStockId",userStockKey);
+                        cell3.innerHTML= stockPrice;
+                        cell4.innerHTML= `<i class="ti-arrow-${arrow}" style="color:${color};font-weight:bold;">&nbsp${Math.abs(chng)}</i>`;
+                        
+                        // cell5.innerHTML = `<i class="ti-trash" id="detailUserStock${i}" type="button"></i>`;
+                        //     let editIcon = document.getElementById(`detailUserStock${i}`),
+                        //         userStockKey = doc.id;
+                        //     editIcon.addEventListener("click", deleteUserStock);
+                        //     editIcon.setAttribute("userId",userKey);
+                        //     editIcon.setAttribute("userStockId",userStockKey);
                     }
                     i++;
                     console.log("Document data:", firebaseData);

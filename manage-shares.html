@@ -673,7 +673,8 @@
                           <th scope="col">Stock Name</th>
                           <th scope="col">Quantity</th>
                           <th scope="col">price</th>
-                          <th scope="col">action</th>
+                          <th scope="col">profit</th>
+                          <!-- <th scope="col">action</th> -->
                         </tr>
                       </thead>
                       <tbody>
@@ -706,12 +707,12 @@
     <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-auth.js"></script>
-    <!-- <script src="assets/js/vendor/firebase-auth.js"></script>
-    <script src="assets/js/firebase.js"></script> -->
+    <script src="assets/js/vendor/firebase-auth.js"></script>
+    <script src="assets/js/firebase.js"></script>
 
     <script>
-      try{
-        firebase.auth().onAuthStateChanged(function(user) {
+      async function firebaseAuthData(){
+        await firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
               // User is signed in.
               var email = user.email;
@@ -726,6 +727,11 @@
               // ...
             }
           });
+
+      }
+      try{
+        firebaseAuthData();
+        
 
       }catch(e){
         console.log("Error is : ",e);

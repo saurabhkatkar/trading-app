@@ -96,6 +96,16 @@
     <script src="assets/js/vendor/firebase-auth.js"></script>
 
     <Script>
+        try{
+       
+            firebaseAuthData();
+
+      }catch(e){
+        console.log("Error is : ",e);
+        console.log("User Not Found");
+        window.location.href = "./login2.html";
+      }
+      
         async function firebaseSignIn(email,password){
             await firebase.auth().signInWithEmailAndPassword(email, password)
             .catch(function(error) {
