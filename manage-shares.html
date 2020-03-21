@@ -706,11 +706,11 @@
     <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-auth.js"></script>
-    <script src="assets/js/vendor/firebase-auth.js"></script>
-
-    <script src="assets/js/firebase.js"></script>
+    <!-- <script src="assets/js/vendor/firebase-auth.js"></script>
+    <script src="assets/js/firebase.js"></script> -->
 
     <script>
+      try{
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
               // User is signed in.
@@ -726,6 +726,13 @@
               // ...
             }
           });
+
+      }catch(e){
+        console.log("Error is : ",e);
+        console.log("User Not Found");
+        window.location.href = "./login2.html";
+      }
+       
 
           $('#logOut').on('click',function(){
             firebase.auth().signOut().then(function() {
